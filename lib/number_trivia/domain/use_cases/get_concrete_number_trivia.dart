@@ -12,9 +12,7 @@ class GetConcreteNumberTrivia implements UseCase<NumberTrivia, Params> {
   //todo call the API
   //api.com/12
   //api.com/random
-
   GetConcreteNumberTrivia(this.repo);
-
 
   // Future<Either<Failure, NumberTrivia>> call({
   //   required int number
@@ -25,17 +23,14 @@ class GetConcreteNumberTrivia implements UseCase<NumberTrivia, Params> {
   //what we need to return, exposed to call method for user uses/ enforced by abstract class.
   //todo --> usecase should always use call method !
   @override
-  Future<Either<Failure, NumberTrivia>> call(Params params) async {
+  Future<Either<Failure, NumberTrivia>?> call(Params params) async {
     return await repo.getConcreteNumberTrivia(params.number);
   }
-
 }
 
 class Params extends Equatable{
   final int number;
-
   Params({required this.number});
-
   @override
   List<Object?> get props => [number];
 }

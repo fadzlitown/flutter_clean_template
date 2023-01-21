@@ -4,10 +4,10 @@ import 'package:flutter_clean_arch_template/number_trivia/domain/entities/number
 // Models are entities with some additional functionality added on top.
 // Ability to be serialized and deserialized to/from JSON & conversion logic. -> required TDD
 class NumberTriviaModel extends NumberTrivia {
-  NumberTriviaModel({required super.text, required super.number});
+  NumberTriviaModel({required String text, required int number}) : super(text: text, number: number);
 
   factory NumberTriviaModel.fromJson(Map<String, dynamic> json) {
-    return NumberTriviaModel(text: json['text'], number: (json['number'] as num).toInt());  //dart has datatype called "num" == can be both INTEGER & DOUBLE
+    return NumberTriviaModel(text: json['text'], number: (json['number']).toInt());  //dart has datatype called "num" == can be both INTEGER & DOUBLE
   }
 
   Map<String, dynamic> toJson() {
