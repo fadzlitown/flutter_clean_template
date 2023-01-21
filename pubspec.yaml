@@ -48,7 +48,7 @@ dependencies:
   #API
   connectivity: ^3.0.6
   http: ^0.13.5
-  internet_connection_checker: ^0.0.1+2
+  internet_connection_checker: ^0.0.1+2 # replace the older data_connection_checker
 
   #local cache
   shared_preferences: ^2.0.15
