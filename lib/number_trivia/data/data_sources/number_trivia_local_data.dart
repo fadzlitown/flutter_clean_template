@@ -27,7 +27,7 @@ class NumberTriviaLocalDataSourceImpl implements NumberTriviaLocalDataSource{
   @override
   Future<NumberTriviaModel>? getLastNumberTrivia() {
     // TODO: need to convert to json
-    final jsonStr = sharedPreferences.getString(CACHED_NUMBER_TRIVIA);
+    final jsonStr = sharedPreferences.getString(CACHED_NUMBER_TRIVIA);  //sync
     if(jsonStr!=null){
       final value = NumberTriviaModel.fromJson(json.decode(jsonStr));
       return Future.value(value);

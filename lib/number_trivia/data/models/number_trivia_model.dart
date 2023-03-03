@@ -1,6 +1,6 @@
 import 'package:flutter_clean_arch_template/number_trivia/domain/entities/number_trivia.dart';
 
-//todo 6 - Model need to extends to Domain Entity
+//todo 6 - Model need to extends to Domain Entity : Data layer is a place where the app meets with outside world of APIs / lib.
 // Models are entities with some additional functionality added on top.
 // Ability to be serialized and deserialized to/from JSON & conversion logic. -> required TDD
 class NumberTriviaModel extends NumberTrivia {

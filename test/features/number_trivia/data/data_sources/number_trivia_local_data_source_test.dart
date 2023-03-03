@@ -58,6 +58,7 @@ void main(){
       dataSource.cacheNumberTrivia(tNumberTriviaModel);
       //assert
       final expectedJson = json.encode(tNumberTriviaModel.toJson());
+      //verify the expectedJson should be same like what mockSharedPreferences has been stored
       verify(mockSharedPreferences.setString(CACHED_NUMBER_TRIVIA,expectedJson));
     });
   });
