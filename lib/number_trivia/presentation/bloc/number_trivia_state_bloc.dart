@@ -12,53 +12,58 @@ import '../../domain/entities/number_trivia.dart';
 import '../../domain/use_cases/get_random_number_trivia.dart';
 
 part 'number_trivia_state_event.dart';
+
 part 'number_trivia_state_state.dart';
 
 const String SERVER_FAILURE_MESSAGE = 'Server Failure';
 const String CACHE_FAILURE_MESSAGE = 'Cache Failure';
-const String INVALID_INPUT_FAILURE_MESSAGE = 'Invalid Input - The number must be a positive integer or zero.';
+const String INVALID_INPUT_FAILURE_MESSAGE =
+    'Invalid Input - The number must be a positive integer or zero.';
 
-class NumberTriviaStateBloc extends Bloc<NumberTriviaStateEvent, NumberTriviaStateState> {
-
+class NumberTriviaStateBloc
+    extends Bloc<NumberTriviaStateEvent, NumberTriviaStateState> {
   final GetConcreteNumberTrivia getConcreteNumberTrivia;
   final GetRandomNumberTrivia getRandomNumberTrivia;
   final InputConversion converter;
 
-  NumberTriviaStateBloc( {required this.getConcreteNumberTrivia, required this.getRandomNumberTrivia, required this.converter})
-      : super(NumberTriviaStateInitial()){
+  NumberTriviaStateBloc(
+      {required this.getConcreteNumberTrivia,
+      required this.getRandomNumberTrivia,
+      required this.converter})
+      : super(NumberTriviaStateInitial()) {
 
-    on<GetNumberConcreteTrivia>((event,emit){
+    on<GetNumberConcreteTrivia>((event, emit) {
       final inputEither = converter.stringToInteger(event.numberStr);
-      inputEither.fold((l) {
+      inputEither.fold((l) {  //sync code
         emit(Error(INVALID_INPUT_FAILURE_MESSAGE));
-      }, (val) async {
+      }, (integer) {
         emit(Loading());
-
-        // from BLOC (PRESENTATION) --> USECASE (DOMAIN) in getConcreteNumberTrivia
-        final failureOrTrivia = await getConcreteNumberTrivia(Params(number: val));
-        _isLoadedOrError(failureOrTrivia!);
+        callApi(integer); //this method handles async code
       });
     });
 
-
     on<GetRandomNumberConcreteTrivia>((event, emit) async {
       emit(Loading());
-
       // from BLOC (PRESENTATION) --> USECASE (DOMAIN) in getRandomNumberTrivia
       final failureOrTrivia = await getRandomNumberTrivia(NoParams());
-      _isLoadedOrError(failureOrTrivia!);
+      // _isLoadedOrError(failureOrTrivia!);
+      failureOrTrivia?.fold((failure) {
+        emit(Error(_mapFailureToMessage(failure)));
+      }, (trivia) {
+        emit(Loaded(trivia));
+      });
     });
   }
 
-
   //Todo 2. Need to update the state. So need to update the abstract state NumberTriviaStateState
-  Stream<NumberTriviaStateState> _isLoadedOrError(Either<Failure, NumberTrivia> failureOrTrivia) async* {
-  failureOrTrivia.fold((failure){
-    emit(Error(_mapFailureToMessage(failure)));
-  }, (numberTrivia) {
-    emit(Loaded(numberTrivia));
-  });
-}
+  Stream<NumberTriviaStateState> _isLoadedOrError(
+      Either<Failure, NumberTrivia> failureOrTrivia) async* {
+     failureOrTrivia.fold((failure)  {
+      emit(Error(_mapFailureToMessage(failure)));
+    }, (numberTrivia) {
+      emit(Loaded(numberTrivia));
+    });
+  }
 
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
@@ -71,4 +76,13 @@ class NumberTriviaStateBloc extends Bloc<NumberTriviaStateEvent, NumberTriviaSta
     }
   }
 
+  Future<void> callApi(int integer) async {
+    // from BLOC (PRESENTATION) --> USECASE (DOMAIN) in getConcreteNumberTrivia
+    final failureOrTrivia = await getConcreteNumberTrivia(Params(number: integer));
+    failureOrTrivia?.fold((failure)  {
+      emit(Error(_mapFailureToMessage(failure)));
+    }, (numberTrivia) {
+      emit(Loaded(numberTrivia));
+    });
+  }
 }
